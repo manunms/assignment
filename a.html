@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+  <title style="align-content: center;">SORTING</title>
+  <style type="text/css">
+    p{
+      color: black; font-family: courier; font-size: 160%;
+    }
+    button{
+      color: black; font-family: courier; font-size: 100%; margin-left: : 20px; border: 1px solid black;
+    }
+    div{
+      color: black; font-family: courier; font-size: 100%;
+    }
+  </style>
+</head>
+<body>
+  <div ng-app="myApp" >
+    <form  ng-controller="TestController as testCtrl" ng-submit="testCtrl.addEle(testCtrl.myEle)">
+      <input type="text" ng-model="testCtrl.myEle" value="">
+      <button type="submit">Add</button>
+      <div ng-repeat="item in testCtrl.arr">
+        <span>{{item}}</span>
+      </div>
+      <br><br><br>
+      <button ng-click="testCtrl.showMerge()">MERGE SORT</button>
+      <div ng-repeat="i in testCtrl.mer">
+        <span>{{i}}</span>
+      </div>
+      <br><br><br>
+      <button ng-click="testCtrl.showQuick()">QUICK SORT</button>
+      <div ng-repeat="i in testCtrl.quick">
+        <span>{{i}}</span>
+      </div>
+      <br><br><br>
+      <button ng-click="testCtrl.showHeap()">HEAP SORT</button>
+      <div ng-repeat="i in testCtrl.heap">
+        <span>{{i}}</span>
+      </div>
+    </div>
+  </form>
+</div>
+</body>
+
+<script>
+  var app=angular.module('myApp', []);
+  app.controller('TestController', function($scope) {
+    this.arr = [];this.mer=[];this.quick=[];this.heap=[]; 
+    
+    this.addEle = function($scope) {
+      var obj = $scope;
+      this.arr.push(obj);
+      this.myEle = '';
+    }
+
+    this.mergeSort=function(a){
+      var k=0; 
+      if(a.length <= 1){
+        return a;
+      }         
+      var arrHalfLength = a.length/2;
+      var left = a.slice(0,arrHalfLength);
+      var right = a.slice(arrHalfLength, a.length);
+      left = this.mergeSort(left); 
+      right = this.mergeSort(right);      
+      var i=0,j=0,mergedArr=[];
+      while(i<left.length || j<right.length ) {
+        if(i == left.length) {
+          for(;j<right.length; j++) {        
+            mergedArr.push(right[j]);
+          }
+          break;
+        }
+        if(j == right.length) {
+          for(;i<left.length; i++) {        
+            mergedArr.push(left[i]);
+          }
+          break;
+        }     
+        if(left[i] < right[j]) {
+          mergedArr.push(left[i]);
+          i++;
+        }       
+        else {
+          mergedArr.push(right[j]);
+          j++
+        }
+      }
+      return mergedArr;
+    };
+
+    this.quickSort=function(arr1) {       
+      if (arr1.length<=1) { 
+        return arr1;
+      } 
+      else {
+        var left=[], right=[],quickArray=[];
+        var pivot=arr1.pop(), length=arr1.length;
+        for (var i=0;i<length;i++) {
+          if (arr1[i]<=pivot) {
+            left.push(arr1[i]);
+          } else {
+            right.push(arr1[i]);
+          }
+        }
+        return quickArray.concat(this.quickSort(left),pivot,this.quickSort(right));
+      }
+    };
+
+    var array_length;
+    this.heap_root=function(arr2, i) {
+      var left=2*i+1;
+      var right=left+1;
+      var max=i;
+      if(left<array_length  &&arr2[left]>arr2[max])
+        max=left;           
+      if(right<array_length&&arr2[right]>arr2[max])
+        max=right;
+      if (max!=i){
+        var temp=arr2[i];
+        arr2[i]=arr2[max];
+        arr2[max]=temp;
+        this.heap_root(arr2,max);
+      }
+      return arr2;
+    };
+
+    this.heapSort=function(arr2){
+      array_length=arr2.length;
+      for (var i=Math.floor(array_length/2);i>=0;i--)
+        this.heap_root(arr2, i);
+      for (i=arr2.length-1;i>0;i--){
+        var temp = arr2[0];
+        arr2[0] = arr2[i];
+        arr2[i] = temp;
+        array_length--;
+        this.heap_root(arr2, 0);
+      }
+      return arr2;
+    };
+
+    this.showMerge=function($scope){
+      this.mer=this.mergeSort(this.arr);
+    }
+
+    this.showQuick=function($scope){
+     this.quick=this.quickSort(this.arr);
+    }
+  
+    this.showHeap=function($scope){
+      this.heap=this.heapSort(this.arr);
+    }
+  });
+
+</script>
+</html>
